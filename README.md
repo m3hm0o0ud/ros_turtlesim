@@ -1,105 +1,97 @@
-سنبدأ من البداية لتثبيت ROS وتشغيل حزمة `turtlesim` بالتفصيل مع توضيح المسارات.
+### Starting from scratch to install ROS and run the `turtlesim` package in detail with paths explained.
 
-### الخطوة 1: إعداد بيئة ROS
+![Turtlesim running](https://github.com/m3hm0o0ud/ros_turtlesim/blob/main/TURTLE.jpg)
 
-1. **تحديث نظام التشغيل والتأكد من صلاحيات الروت:**
-   افتح الطرفية وقم بتنفيذ الأوامر التالية لتحديث النظام:
+### Step 1: Setting Up the ROS Environment
+
+1. **Update the system and ensure root privileges:**
    ```sh
    sudo apt-get update
    sudo apt-get upgrade
    ```
 
-2. **إضافة مفاتيح ROS:**
-   قم بإضافة مفتاح ROS باستخدام الأمر:
+2. **Add ROS keys:**
    ```sh
    sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
    ```
 
-3. **إضافة مستودعات ROS:**
-   أضف مستودعات ROS إلى النظام:
+3. **Add ROS repositories:**
    ```sh
    sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
    ```
 
-4. **تثبيت ROS:**
-   بعد إضافة المستودعات، قم بتثبيت ROS:
+4. **Install ROS:**
    ```sh
    sudo apt-get update
    sudo apt-get install ros-noetic-desktop-full
    ```
 
-5. **تهيئة rosdep:**
-   قم بتهيئة rosdep لتحميل التبعيات اللازمة:
+5. **Initialize rosdep:**
    ```sh
    sudo rosdep init
    rosdep update
    ```
 
-6. **تهيئة البيئة:**
-   أضف ROS إلى المسار البيئي الخاص بك:
+6. **Configure the environment:**
    ```sh
    echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
    source ~/.bashrc
    ```
 
-### الخطوة 2: إنشاء مساحة عمل كاتكين (Catkin Workspace)
+### Step 2: Create a Catkin Workspace
 
-1. **إنشاء مساحة عمل كاتكين:**
-   قم بإنشاء الدليل الخاص بمساحة العمل:
+1. **Create the workspace directory:**
    ```sh
    mkdir -p ~/catkin_ws/src
    cd ~/catkin_ws/
    catkin_make
    ```
 
-2. **تهيئة البيئة لتشمل مساحة العمل:**
-   أضف مساحة العمل الجديدة إلى المسار البيئي:
+2. **Configure the environment to include the workspace:**
    ```sh
    echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
    source ~/.bashrc
    ```
 
-### الخطوة 3: تثبيت واستخدام `turtlesim`
+### Step 3: Install and Use `turtlesim`
 
-1. **تثبيت `turtlesim`:**
-   قم بتثبيت الحزمة باستخدام apt-get:
+1. **Install `turtlesim`:**
    ```sh
    sudo apt-get install ros-noetic-turtlesim
    ```
 
-2. **إنشاء حزمة ROS جديدة:**
-   انتقل إلى مساحة العمل الخاصة بك وأنشئ حزمة جديدة:
+2. **Create a new ROS package:**
    ```sh
    cd ~/catkin_ws/src
    catkin_create_pkg my_turtle std_msgs rospy roscpp turtlesim
    ```
 
-3. **بناء الحزمة:**
-   بعد إنشاء الحزمة، قم ببنائها باستخدام:
+3. **Build the package:**
    ```sh
    cd ~/catkin_ws
    catkin_make
    ```
 
-4. **إطلاق `turtlesim_node`:**
-   افتح طرفية جديدة وشغل roscore:
+4. **Launch `turtlesim_node`:**
+   - Open a new terminal and run `roscore`:
    ```sh
    roscore
    ```
-   في طرفية أخرى، شغل `turtlesim_node`:
+   - In another terminal, run `turtlesim_node`:
    ```sh
    rosrun turtlesim turtlesim_node
    ```
 
-### الخطوة 4: تحريك السلحفاة باستخدام Python
+### Step 4: Move the Turtle Using Python
 
-1. **إنشاء ملف تحريك السلحفاة:**
-   في الدليل `~/catkin_ws/src/my_turtle/src/`، أنشئ ملفًا جديدًا باسم `turtle_mover.py`:
+1. **Create the turtle mover file:**
+   - In the directory `~/catkin_ws/src/my_turtle/src/`, create a new file named `turtle_mover.py`:
    ```sh
    cd ~/catkin_ws/src/my_turtle/src
    nano turtle_mover.py
    ```
-   الصق الكود التالي واحفظ الملف:
+
+   - Paste the following code and save the file:
    ```python
    #!/usr/bin/env python3
 
@@ -125,46 +117,45 @@
            pass
    ```
 
-2. **تعديل CMakeLists.txt:**
-   أضف السطر التالي إلى `CMakeLists.txt` في `~/catkin_ws/src/my_turtle/`:
+2. **Modify `CMakeLists.txt`:**
+   - Add the following line to `CMakeLists.txt` in `~/catkin_ws/src/my_turtle/`:
    ```cmake
    catkin_install_python(PROGRAMS src/turtle_mover.py
      DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
    )
    ```
 
-3. **إعادة بناء الحزمة:**
-   قم بإعادة بناء الحزمة:
+3. **Rebuild the package:**
    ```sh
    cd ~/catkin_ws
    catkin_make
    source devel/setup.bash
    ```
 
-4. **تشغيل ملف تحريك السلحفاة:**
-   في طرفية جديدة، شغل الملف:
+4. **Run the turtle mover file:**
+   - In a new terminal, run the file:
    ```sh
    rosrun my_turtle turtle_mover.py
    ```
 
-### الخطوة 5: تشغيل حزمة `turtlesim`
+### Step 5: Running the `turtlesim` Package
 
-1. **تشغيل عقدة `turtlesim`:**
-   افتح طرفية جديدة وشغل roscore:
+1. **Run the `turtlesim` node:**
+   - Open a new terminal and run `roscore`:
    ```sh
    roscore
    ```
-   في طرفية أخرى، شغل عقدة `turtlesim`:
+   - In another terminal, run the `turtlesim` node:
    ```sh
    rosrun turtlesim turtlesim_node
    ```
 
-2. **تشغيل ملف `turtle_mover.py`:**
-   في طرفية جديدة، شغل الملف:
+2. **Run the `turtle_mover.py` file:**
+   - In a new terminal, run the file:
    ```sh
    rosrun my_turtle turtle_mover.py
    ```
 
-### الخطوة 6: التحكم بالسلحفاة
+### Step 6: Controlling the Turtle
 
-يمكنك الآن رؤية السلحفاة تتحرك على الشاشة. يمكنك تعديل قيم السرعة الخطية والزوايا في الملف `turtle_mover.py` لتغيير حركة السلحفاة.
+You should now see the turtle moving on the screen. You can adjust the linear and angular speed values in the `turtle_mover.py` file to change the turtle's movement.
